@@ -28,7 +28,6 @@ func main() {
 	http.HandleFunc("/", HandleMain)
 	http.HandleFunc("/login-google", HandleGoogleLogin)
 	http.HandleFunc("/callback", CallBackGoogle)
-	http.HandleFunc("/validateToken", ValidateToken)
 
 	http.ListenAndServe(":8080", nil)
 }
@@ -115,19 +114,4 @@ func CallBackGoogle(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(string(response)))
 		return
 	}
-}
-
-func ValidateToken(w http.ResponseWriter, r *http.Request) {
-	var httpClient = &http.Client{}
-	token, _ := r.URL.Query()["token"]
-	fmt.Println("Token:" + token[0])
-	oauth2Service := oauth2.NewClient(httpClient)
-	tokenInfoCall := oauth2Service.Tokeninfo()
-	tokenInfoCall.IdToken(token)
-	tokenInfo, err := tokenInfoCall.Do()
-	if err != nil {
-		return nil, err
-	}
-	fmt.Println(tokenInfo)
-	return tokenInfo, nil
 }
